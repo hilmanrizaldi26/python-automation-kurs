@@ -23,10 +23,11 @@ SERVICE_ACCOUNT_FILE = "service_account.json"
 # =====================================================
 # 1. LIVE SCRAPING BRI
 # =====================================================
-
 options = Options()
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
-# Untuk awal jangan headless dulu
 driver = webdriver.Chrome(options=options)
 
 try:
