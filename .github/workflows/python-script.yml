@@ -1,0 +1,37 @@
+name: Run Python Scripts
+
+on:
+  schedule:
+    - cron: '0 8 * * *'   # jalan tiap jam 8 pagi
+    - cron: '0 13 * * *'  # jalan tiap jam 1 siang
+  workflow_dispatch:       # bisa dijalankan manual juga
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run BRI script
+        run: python test_bri.py
+
+      - name: Run Mandiri script
+        run: python test_mandiri.py
+
+      - name: Run BCA script
+        run: python test_bca.py
+
+      - name: Run BTN script
+        run: python test_btn.py
+
+      - name: Run BNI script
+        run: python test_bni.py
