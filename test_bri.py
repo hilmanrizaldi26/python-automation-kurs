@@ -5,27 +5,28 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from datetime import datetime
-import time
 import re
 import pandas as pd
 import gspread
-import requests
 
 # =====================================================
 # KONFIGURASI
 # =====================================================
 BRI_URL = "https://bri.co.id/web/guest/id/kurs-detail"
-BRI_API = "https://bri.co.id/kurs-json"   # endpoint JSON (contoh, sesuaikan jika berubah)
 SPREADSHEET_ID = "1xQ9mH6YmrKaqG5rNNSQR2wfH3u8DXOteFo2ed_Sw_F0"
 SERVICE_ACCOUNT_FILE = "service_account.json"
 
 def get_driver():
     options = Options()
-    options.binary_location = "/usr/bin/chromium-browser"
+    options.binary_location = "/usr/bin/chromium-browser"   # lokasi Chromium di runner
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114 Safari/537.36"
+    )
     return webdriver.Chrome(options=options)
 
 # =====================================================
@@ -50,7 +51,7 @@ finally:
     driver.quit()
 
 # =====================================================
-# 2. EKSTRAK DATA KURS DARI HTML
+# 2. EKSTRAK DATA KURS
 # =====================================================
 pattern = (
     r'\{\\"buyRateCounter\\":\\"([^"]+)\\",'
@@ -60,21 +61,6 @@ pattern = (
     r'\\"sellRateERate\\":\\"([^"]+)\\"'
 )
 matches = re.findall(pattern, html)
-
-if len(matches) == 0:
-    print("HTML kosong, fallback ke API JSON...")
-    resp = requests.get(BRI_API)
-    data = resp.json()
-    matches = [
-        (
-            item["buyRateCounter"],
-            item["buyRateERate"],
-            item["currency"],
-            item["sellRateCounter"],
-            item["sellRateERate"]
-        )
-        for item in data
-    ]
 
 print("\nJumlah data ditemukan:", len(matches))
 if len(matches) != 22:
