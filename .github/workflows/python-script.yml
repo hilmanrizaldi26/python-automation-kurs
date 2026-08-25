@@ -21,6 +21,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Tambahan untuk Selenium
+      - name: Install Chrome
+        run: sudo apt-get install -y chromium-browser
+
+      - name: Install ChromeDriver
+        run: sudo apt-get install -y chromium-chromedriver
+
+      - name: Set CHROME_PATH
+        run: echo "CHROME_PATH=$(which chromium-browser)" >> $GITHUB_ENV
+
+      # Setup Google Service Account dari secret
+      - name: Setup Google Service Account
+        run: echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" > service_account.json
+
       - name: Run BRI script
         run: python test_bri.py
 
