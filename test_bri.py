@@ -19,16 +19,24 @@ SPREADSHEET_ID = "1xQ9mH6YmrKaqG5rNNSQR2wfH3u8DXOteFo2ed_Sw_F0"
 
 SERVICE_ACCOUNT_FILE = "service_account.json"
 
+# Konfigurasi umum untuk semua bank
+def get_driver():
+    options = Options()
+    options.binary_location = "/usr/bin/chromium-browser"  # lokasi Chromium di runner
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    return webdriver.Chrome(options=options)
 
 # =====================================================
 # 1. LIVE SCRAPING BRI
 # =====================================================
-options = Options()
-options.add_argument("--headless")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-
-driver = webdriver.Chrome(options=options)
+driver = get_driver()
+try:
+    driver.get("https://bri.co.id/web/guest/id/kurs-detail")
+    print("Title BRI:", driver.title)
+finally:
+    driver.quit()
 
 try:
     print("Membuka BRI...")
